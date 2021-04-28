@@ -1,9 +1,9 @@
 #include <Arduino.h>
 
-// this is for the Arduino Nano
+// this code is for the Arduino Nano
 // It uses both interrupt pins to detect any change in the quadrature encoder signals, both rising and falling.
 
-#define PWM1 9 // pins that go to the H-Bridge inputs
+#define PWM1 9 // output pins that go to the H-Bridge inputs. If direction and encoder don't match, just swap the motor wires. Or these two.
 #define PWM2 10
 
 #define QUAD1 2 // Interrupt pins that respond to the quadrature encoder outputs - use 1k as protective resistors
