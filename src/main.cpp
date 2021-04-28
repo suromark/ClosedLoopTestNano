@@ -34,12 +34,12 @@ void setup()
 {
   Serial.begin(115200);
   // put your setup code here, to run once:
-  pinMode(2, INPUT_PULLUP);
-  pinMode(3, INPUT_PULLUP);
-  pinMode(9, OUTPUT);
-  pinMode(10, OUTPUT);
-  attachInterrupt(digitalPinToInterrupt(2), intcount, CHANGE);
-  attachInterrupt(digitalPinToInterrupt(3), intcount, CHANGE);
+  pinMode(QUAD1, INPUT_PULLUP);
+  pinMode(QUAD2, INPUT_PULLUP);
+  pinMode(PWM1, OUTPUT);
+  pinMode(PWM2, OUTPUT);
+  attachInterrupt(digitalPinToInterrupt(QUAD1), intcount, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(QUAD2), intcount, CHANGE);
 }
 
 void loop()
@@ -63,14 +63,14 @@ void loop()
   if (current > target) // do we need to turn "downwards"?
   {
     delta = current - target; // remaining steps
-    analogWrite(9, min(ramp + MINSPEED, min(255, (delta / STEEP) + MINSPEED))); // set one channel to PWM
-    analogWrite(10, 0); // the other channel is simply set to ground
+    analogWrite(PWM1, min(ramp + MINSPEED, min(255, (delta / STEEP) + MINSPEED))); // set one channel to PWM
+    analogWrite(PWM2, 0); // the other channel is simply set to ground
   }
   else
   {
     delta = target - current; // same as above, but we're turning "upwards" to reach the target
-    analogWrite(9, 0); // so this motor pin channel is now ground
-    analogWrite(10, min(ramp + MINSPEED, min(255, (delta / STEEP) + MINSPEED))); // and this channel is driven by PWM
+    analogWrite(PWM1, 0); // so this motor pin channel is now ground
+    analogWrite(PWM2, min(ramp + MINSPEED, min(255, (delta / STEEP) + MINSPEED))); // and this channel is driven by PWM
   }
 
   if (delta < ZONE) // we're inside the deadband of our target position
