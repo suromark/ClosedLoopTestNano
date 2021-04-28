@@ -49,36 +49,34 @@ void loop()
 #define MINSPEED 20 // minimum PWM value, adjust to something that's bit enough to make the motor turn
 #define ZONE 24     // Deadzone around target that is considered "good enough" (since the motor will take time to come to a halt)
 
-  static int32_t target = 1000; // just a first target
-  static int32_t current = 0; // a buffer
-  static unsigned long start = 0; // the moment the movement starts; to calculate acceleration
+  static int32_t target = 1000;       // just a first target
+  static int32_t current = 0;         // a buffer
+  static unsigned long start = 0;     // the moment the movement starts; to calculate acceleration
   static unsigned long nextprint = 0; // a clock for the diagnostic output every 0.5 seconds
-  int32_t delta, ramp = 0; // values for calculation 
-  unsigned long tick = millis(); // remember the current millisecond
+  int32_t delta, ramp = 0;            // values for calculation
+  unsigned long tick = millis();      // remember the current millisecond
 
-  current = position; // read the position so it doesn't change within the cycle, even if interrupts happen
+  current = position;            // read the position so it doesn't change within the cycle, even if interrupts happen
   ramp = (tick - start) / STEEP; // ramp-up PWM value as the milliseconds pass after start
-
 
   if (current > target) // do we need to turn "downwards"?
   {
-    delta = current - target; // remaining steps
+    delta = current - target;                                                      // remaining steps
     analogWrite(PWM1, min(ramp + MINSPEED, min(255, (delta / STEEP) + MINSPEED))); // set one channel to PWM
-    analogWrite(PWM2, 0); // the other channel is simply set to ground
+    analogWrite(PWM2, 0);                                                          // the other channel is simply set to ground
   }
   else
   {
-    delta = target - current; // same as above, but we're turning "upwards" to reach the target
-    analogWrite(PWM1, 0); // so this motor pin channel is now ground
+    delta = target - current;                                                      // same as above, but we're turning "upwards" to reach the target
+    analogWrite(PWM1, 0);                                                          // so this motor pin channel is now ground
     analogWrite(PWM2, min(ramp + MINSPEED, min(255, (delta / STEEP) + MINSPEED))); // and this channel is driven by PWM
   }
 
   if (delta < ZONE) // we're inside the deadband of our target position
   {
-
-    Serial.println("Reached ZONE");
     analogWrite(PWM1, 0); // Shut down both PWM signals
     analogWrite(PWM2, 0);
+    Serial.println("Reached ZONE");
     delay(500); // just for testing; let the motor run out.
     Serial.print("Stopped at ");
     Serial.print(position);
@@ -86,7 +84,7 @@ void loop()
     Serial.println(target);
 
     // have we been running towards a random test position?
-    if (target > 0) 
+    if (target > 0)
     {
       target = 0; // yes: go back to zero
     }
@@ -99,7 +97,7 @@ void loop()
     start = millis(); // Begin the acceleration ramp
   }
 
-// a diagnostic print that happens every 500 ms
+  // a diagnostic print that happens every 500 ms
   if (tick > nextprint)
   {
     Serial.println(position);
